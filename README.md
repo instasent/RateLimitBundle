@@ -1,4 +1,4 @@
-NoxlogicRateLimitBundle
+InstasentRateLimitBundle
 ========================
 
 [![Build Status](https://travis-ci.org/jaytaph/RateLimitBundle.svg?branch=master)](https://travis-ci.org/jaytaph/RateLimitBundle)
@@ -27,7 +27,7 @@ Installation takes just few easy steps:
 ### Step 1: Add the bundle to your composer.json
 
 If you're not yet familiar with Composer see http://getcomposer.org.
-Add the NoxlogicRateLimitBundle in your composer.json:
+Add the InstasentRateLimitBundle in your composer.json:
 
 ```js
 {
@@ -55,7 +55,7 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
-        new Instasent\RateLimitBundle\NoxlogicRateLimitBundle(),
+        new Instasent\RateLimitBundle\InstasentRateLimitBundle(),
     );
 }
 ```
