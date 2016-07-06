@@ -1,0 +1,30 @@
+{
+    "name": "instasent/ratelimit-bundle",
+    "description": "This bundle provides functionality to limit calls to actions based on rate limits",
+    "keywords": [ "x-rate-limit", "api", "rest" ],
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Marcos Gómez",
+            "email": "marcos@instasent.com"
+        }
+    ],
+    "require": {
+        "symfony/framework-bundle": ">=2.3",
+        "sensio/framework-extra-bundle": ">=2.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.1.*"
+    },
+    "suggest": {
+        "snc/redis-bundle": "Use Redis as a storage engine.",
+        "leaseweb/memcache-bundle": "Use Memcache as a storage engine.",
+        "doctrine/doctrine-cache-bundle": "Use Doctrine Cache as a storage engine.",
+        "friendsofsymfony/oauth-server-bundle": "Throttle using OAuth access tokens."
+    },
+    "autoload": {
+        "psr-0": { "Instasent\\RateLimitBundle": "" }
+    },
+    "target-dir": "Instasent/RateLimitBundle"
+}
