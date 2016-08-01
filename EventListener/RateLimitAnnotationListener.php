@@ -4,6 +4,7 @@ namespace Instasent\RateLimitBundle\EventListener;
 
 use Instasent\RateLimitBundle\Annotation\RateLimit;
 use Instasent\RateLimitBundle\Events\GenerateKeyEvent;
+use Instasent\RateLimitBundle\Events\RateLimitEvent;
 use Instasent\RateLimitBundle\Events\RateLimitEvents;
 use Instasent\RateLimitBundle\Service\RateLimitService;
 use Instasent\RateLimitBundle\Util\PathLimitProcessor;
@@ -73,6 +74,11 @@ class RateLimitAnnotationListener extends BaseListener
         // Ratelimit the call
         $rateLimitInfo = $this->rateLimitService->limitRate($key);
         if (! $rateLimitInfo) {
+
+            // Dispatch before create rateLimit key
+            $rateLimitEvent = new RateLimitEvent($event->getRequest(), $rateLimit);
+            $this->eventDispatcher->dispatch(RateLimitEvents::PRE_CREATE_RATE_LIMIT, $rateLimitEvent);
+
             // Create new rate limit entry for this call
             $rateLimitInfo = $this->rateLimitService->createRate($key, $rateLimit->getLimit(), $rateLimit->getPeriod());
             if (! $rateLimitInfo) {
@@ -81,7 +87,6 @@ class RateLimitAnnotationListener extends BaseListener
                 // @codeCoverageIgnoreEnd
             }
         }
-
 
         // Store the current rating info in the request attributes
         $request = $event->getRequest();
@@ -111,7 +116,6 @@ class RateLimitAnnotationListener extends BaseListener
         }
 
     }
-
 
     /**
      * @param RateLimit[] $annotations

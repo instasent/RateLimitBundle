@@ -247,11 +247,42 @@ class RateLimitGenerateKeyListener
 
 Make sure to generate a key based on what is rate limited in your controllers.
 
+## Set custom period or limit
+
+If you need to create a custom period/limit based for example on client settings saved in database, you need to register a listener to listen to the `ratelimit.pre.create` event:
+
+```yaml
+services:
+    mybundle.listener.rate_limit_pre_create:
+        class: MyBundle\Listener\RateLimitFromDatabaseListener
+        tags:
+            - { name: kernel.event_listener, event: 'ratelimit.pre.create', method: 'findUserLimit' }
+```
+
+```php
+<?php
+
+namespace MyBundle\Listener;
+
+use Instasent\RateLimitBundle\Events\RateLimit;
+
+class RateLimitFromDatabaseListener
+{
+    public function findUserLimit(RateLimit $event)
+    {
+
+        //TODO search value in database
+        $event->setLimit($value);
+    }
+}
+```
+
+Set your own limit value
 
 ## Throwing exceptions
 
-Instead of returning a Response object when a rate limit has exceeded, it's also possible to throw an exception. This 
-allows you to easily handle the rate limit on another level, for instance by capturing the ``kernel.exception`` event. 
+Instead of returning a Response object when a rate limit has exceeded, it's also possible to throw an exception. This
+allows you to easily handle the rate limit on another level, for instance by capturing the ``kernel.exception`` event.
 
 
 ## Running tests
