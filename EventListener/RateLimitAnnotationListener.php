@@ -16,7 +16,6 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class RateLimitAnnotationListener extends BaseListener
 {
-
     /**
      * @var eventDispatcherInterface
      */
@@ -33,7 +32,7 @@ class RateLimitAnnotationListener extends BaseListener
     protected $pathLimitProcessor;
 
     /**
-     * @param RateLimitService                    $rateLimitService
+     * @param RateLimitService $rateLimitService
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
@@ -56,16 +55,16 @@ class RateLimitAnnotationListener extends BaseListener
         }
 
         // Skip if we are a closure
-        if (! is_array($controller = $event->getController())) {
+        if (!is_array($controller = $event->getController())) {
             return;
         }
 
         // Find the best match
-        $annotations = $event->getRequest()->attributes->get('_x-rate-limit', array());
+        $annotations = $event->getRequest()->attributes->get('_x-rate-limit', []);
         $rateLimit = $this->findBestMethodMatch($event->getRequest(), $annotations);
 
         // No matching annotation found
-        if (! $rateLimit) {
+        if (!$rateLimit) {
             return;
         }
 
@@ -73,7 +72,7 @@ class RateLimitAnnotationListener extends BaseListener
 
         // Ratelimit the call
         $rateLimitInfo = $this->rateLimitService->limitRate($key);
-        if (! $rateLimitInfo) {
+        if (!$rateLimitInfo) {
 
             // Dispatch before create rateLimit key
             $rateLimitEvent = new RateLimitEvent($event->getRequest(), $rateLimit);
@@ -81,7 +80,7 @@ class RateLimitAnnotationListener extends BaseListener
 
             // Create new rate limit entry for this call
             $rateLimitInfo = $this->rateLimitService->createRate($key, $rateLimit->getLimit(), $rateLimit->getPeriod());
-            if (! $rateLimitInfo) {
+            if (!$rateLimitInfo) {
                 // @codeCoverageIgnoreStart
                 return;
                 // @codeCoverageIgnoreEnd
@@ -93,7 +92,7 @@ class RateLimitAnnotationListener extends BaseListener
         $request->attributes->set('rate_limit_info', $rateLimitInfo);
 
         // Reset the rate limits
-        if(time() >= $rateLimitInfo->getResetTimestamp()) {
+        if (time() >= $rateLimitInfo->getResetTimestamp()) {
             $this->rateLimitService->resetRate($key);
         }
 
@@ -114,7 +113,6 @@ class RateLimitAnnotationListener extends BaseListener
                 // @codeCoverageIgnoreEnd
             });
         }
-
     }
 
     /**
@@ -130,7 +128,7 @@ class RateLimitAnnotationListener extends BaseListener
         $best_match = null;
         foreach ($annotations as $annotation) {
             // cast methods to array, even method holds a string
-            $methods = is_array($annotation->getMethods()) ? $annotation->getMethods() : array($annotation->getMethods());
+            $methods = is_array($annotation->getMethods()) ? $annotation->getMethods() : [$annotation->getMethods()];
 
             if (in_array($request->getMethod(), $methods)) {
                 $best_match = $annotation;
@@ -150,13 +148,13 @@ class RateLimitAnnotationListener extends BaseListener
         $request = $event->getRequest();
         $controller = $event->getController();
 
-        $rateLimitMethods = join("", $rateLimit->getMethods());
+        $rateLimitMethods = implode('', $rateLimit->getMethods());
         $rateLimitAlias = count($annotations) === 0
             ? $this->pathLimitProcessor->getMatchedPath($request)
-            : get_class($controller[0]) . ':' . $controller[1];
+            : get_class($controller[0]).':'.$controller[1];
 
         // Create an initial key by joining the methods and the alias
-        $key = $rateLimitMethods . ':' . $rateLimitAlias ;
+        $key = $rateLimitMethods.':'.$rateLimitAlias;
 
         // Let listeners manipulate the key
         $keyEvent = new GenerateKeyEvent($event->getRequest(), $key);

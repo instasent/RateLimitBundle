@@ -2,15 +2,11 @@
 
 namespace Instasent\RateLimitBundle\Tests\Annotation;
 
-use Instasent\RateLimitBundle\EventListener\OauthKeyGenerateListener;
-use Instasent\RateLimitBundle\Events\GenerateKeyEvent;
 use Instasent\RateLimitBundle\Service\RateLimitInfo;
 use Instasent\RateLimitBundle\Tests\TestCase;
-use Symfony\Component\HttpFoundation\Request;
 
 class RateLimitInfoTest extends TestCase
 {
-
     public function testRateInfoSetters()
     {
         $rateInfo = new RateLimitInfo();
@@ -24,5 +20,4 @@ class RateLimitInfoTest extends TestCase
         $rateInfo->setResetTimestamp(100000);
         $this->assertEquals(100000, $rateInfo->getResetTimestamp());
     }
-
 }

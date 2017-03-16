@@ -4,7 +4,6 @@ namespace Instasent\RateLimitBundle\EventListener;
 
 abstract class BaseListener
 {
-
     /**
      * @var array Default parameters which can be used in the listener methods.
      */
@@ -21,7 +20,8 @@ abstract class BaseListener
 
     /**
      * @param  $name
-     * @param  mixed $default
+     * @param mixed $default
+     *
      * @return mixed
      */
     public function getParameter($name, $default = null)

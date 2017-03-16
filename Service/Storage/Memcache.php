@@ -6,7 +6,6 @@ use Instasent\RateLimitBundle\Service\RateLimitInfo;
 
 class Memcache implements StorageInterface
 {
-
     /** @var \Memcached */
     protected $client;
 
@@ -45,7 +44,7 @@ class Memcache implements StorageInterface
 
     public function createRate($key, $limit, $period)
     {
-        $info = array();
+        $info = [];
         $info['limit'] = $limit;
         $info['calls'] = 1;
         $info['reset'] = time() + $period;
@@ -58,6 +57,7 @@ class Memcache implements StorageInterface
     public function resetRate($key)
     {
         $this->client->delete($key);
+
         return true;
     }
 }

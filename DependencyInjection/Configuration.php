@@ -7,15 +7,14 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 /**
- * This is the class that validates and merges configuration from your app/config files
- *
+ * This is the class that validates and merges configuration from your app/config files.
  */
 class Configuration implements ConfigurationInterface
 {
     const HTTP_TOO_MANY_REQUESTS = 429;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {
@@ -24,7 +23,7 @@ class Configuration implements ConfigurationInterface
             ->canBeDisabled()
             ->children()
                 ->enumNode('storage_engine')
-                    ->values(array('redis','memcache','doctrine'))
+                    ->values(['redis', 'memcache', 'doctrine'])
                     ->defaultValue('redis')
                     ->info('The storage engine where all the rates will be stored')
                 ->end()
@@ -52,9 +51,10 @@ class Configuration implements ConfigurationInterface
                     ->info('Optional exception class that will be returned when a client hits the rate limit')
                     ->validate()
                         ->always(function ($item) {
-                            if (! is_subclass_of($item, '\Exception')) {
+                            if (!is_subclass_of($item, '\Exception')) {
                                 throw new InvalidConfigurationException(sprintf("'%s' must inherit the \\Exception class", $item));
                             }
+
                             return $item;
                         })
                     ->end()
@@ -77,7 +77,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->arrayNode('path_limits')
-                    ->defaultValue(array())
+                    ->defaultValue([])
                     ->info('Rate limits for paths')
                     ->prototype('array')
                         ->children()
@@ -86,10 +86,10 @@ class Configuration implements ConfigurationInterface
                             ->end()
                             ->arrayNode('methods')
                                 ->prototype('enum')
-                                    ->values(array('*', 'GET', 'POST', 'PUT', 'DELETE', 'PATCH'))
+                                    ->values(['*', 'GET', 'POST', 'PUT', 'DELETE', 'PATCH'])
                                 ->end()
                                 ->requiresAtLeastOneElement()
-                                ->defaultValue(array('*'))
+                                ->defaultValue(['*'])
                             ->end()
                             ->integerNode('limit')
                                 ->isRequired()
@@ -102,8 +102,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-            ->end()
-        ;
+            ->end();
 
         return $treeBuilder;
     }

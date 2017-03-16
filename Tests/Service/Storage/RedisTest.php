@@ -7,20 +7,20 @@ use Instasent\RateLimitBundle\Tests\TestCase;
 
 class RedisTest extends TestCase
 {
-
-    function setUp() {
-        if (! class_exists('Predis\\Client')) {
+    public function setUp()
+    {
+        if (!class_exists('Predis\\Client')) {
             $this->markTestSkipped('Predis client not installed');
         }
     }
 
     public function testgetRateInfo()
     {
-        $client = $this->getMock('Predis\\Client', array('hgetall'));
+        $client = $this->getMock('Predis\\Client', ['hgetall']);
         $client->expects($this->once())
               ->method('hgetall')
               ->with('foo')
-              ->will($this->returnValue(array('limit' => 100, 'calls' => 50, 'reset' => 1234)));
+              ->will($this->returnValue(['limit' => 100, 'calls' => 50, 'reset' => 1234]));
 
         $storage = new Redis($client);
         $rli = $storage->getRateInfo('foo');
@@ -32,26 +32,25 @@ class RedisTest extends TestCase
 
     public function testcreateRate()
     {
-        $client = $this->getMock('Predis\\Client', array('hset', 'expire', 'hgetall'));
+        $client = $this->getMock('Predis\\Client', ['hset', 'expire', 'hgetall']);
         $client->expects($this->once())
               ->method('expire')
               ->with('foo', 123);
         $client->expects($this->exactly(3))
               ->method('hset')
               ->withConsecutive(
-                    array('foo', 'limit', 100),
-                    array('foo', 'calls', 1),
-                    array('foo', 'reset')
+                    ['foo', 'limit', 100],
+                    ['foo', 'calls', 1],
+                    ['foo', 'reset']
               );
 
         $storage = new Redis($client);
         $storage->createRate('foo', 100, 123);
     }
 
-
     public function testLimitRateNoKey()
     {
-        $client = $this->getMock('Predis\\Client', array('hexists'));
+        $client = $this->getMock('Predis\\Client', ['hexists']);
         $client->expects($this->once())
               ->method('hexists')
               ->with('foo', 'limit')
@@ -63,7 +62,7 @@ class RedisTest extends TestCase
 
     public function testLimitRateWithKey()
     {
-        $client = $this->getMock('Predis\\Client', array('hexists', 'hincrby', 'hgetall'));
+        $client = $this->getMock('Predis\\Client', ['hexists', 'hincrby', 'hgetall']);
         $client->expects($this->once())
               ->method('hexists')
               ->with('foo', 'limit')
@@ -77,11 +76,9 @@ class RedisTest extends TestCase
         $storage->limitRate('foo');
     }
 
-
-
     public function testresetRate()
     {
-        $client = $this->getMock('Predis\\Client', array('hdel'));
+        $client = $this->getMock('Predis\\Client', ['hdel']);
         $client->expects($this->once())
               ->method('hdel')
               ->with('foo');
@@ -89,5 +86,4 @@ class RedisTest extends TestCase
         $storage = new Redis($client);
         $this->assertTrue($storage->resetRate('foo'));
     }
-
 }

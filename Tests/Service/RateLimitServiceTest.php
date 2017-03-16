@@ -2,16 +2,11 @@
 
 namespace Instasent\RateLimitBundle\Tests\Annotation;
 
-use Instasent\RateLimitBundle\EventListener\OauthKeyGenerateListener;
-use Instasent\RateLimitBundle\Events\GenerateKeyEvent;
-use Instasent\RateLimitBundle\Service\RateLimitInfo;
 use Instasent\RateLimitBundle\Service\RateLimitService;
 use Instasent\RateLimitBundle\Tests\TestCase;
-use Symfony\Component\HttpFoundation\Request;
 
 class RateLimitServiceTest extends TestCase
 {
-
     public function testSetStorage()
     {
         $mockStorage = $this->getMock('Instasent\\RateLimitBundle\\Service\\Storage\\StorageInterface');
@@ -30,7 +25,6 @@ class RateLimitServiceTest extends TestCase
         $service = new RateLimitService();
         $service->getStorage();
     }
-
 
     public function testLimitRate()
     {

@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class GenerateKeyEvent extends Event
 {
-
     /** @var Request */
     protected $request;
 
@@ -49,6 +48,6 @@ class GenerateKeyEvent extends Event
      */
     public function addToKey($part)
     {
-        $this->key .= ':' . $part;
+        $this->key .= ':'.$part;
     }
 }

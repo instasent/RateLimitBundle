@@ -7,20 +7,20 @@ use Instasent\RateLimitBundle\Tests\TestCase;
 
 class MemcacheTest extends TestCase
 {
-
-    function setUp() {
-        if (! class_exists('\\MemCached')) {
+    public function setUp()
+    {
+        if (!class_exists('\\MemCached')) {
             $this->markTestSkipped('MemCached extension not installed');
         }
     }
 
     public function testgetRateInfo()
     {
-        $client = @$this->getMock('\\Memcached', array('get'));
+        $client = @$this->getMock('\\Memcached', ['get']);
         $client->expects($this->once())
               ->method('get')
               ->with('foo')
-              ->will($this->returnValue(array('limit' => 100, 'calls' => 50, 'reset' => 1234)));
+              ->will($this->returnValue(['limit' => 100, 'calls' => 50, 'reset' => 1234]));
 
         $storage = new Memcache($client);
         $rli = $storage->getRateInfo('foo');
@@ -32,7 +32,7 @@ class MemcacheTest extends TestCase
 
     public function testcreateRate()
     {
-        $client = @$this->getMock('\\Memcached', array('set', 'get'));
+        $client = @$this->getMock('\\Memcached', ['set', 'get']);
         $client->expects($this->exactly(1))
               ->method('set');
 
@@ -40,17 +40,16 @@ class MemcacheTest extends TestCase
         $storage->createRate('foo', 100, 123);
     }
 
-
     public function testLimitRateNoKey()
     {
-        $client = @$this->getMock('\\Memcached', array('get','cas','getResultCode'));
+        $client = @$this->getMock('\\Memcached', ['get', 'cas', 'getResultCode']);
         $client->expects($this->any())
                 ->method('getResultCode')
                 ->willReturn(\Memcached::RES_SUCCESS);
         $client->expects($this->atLeastOnce())
               ->method('get')
               ->with('foo')
-              ->will($this->returnValue(array('limit' => 100, 'calls' => 1, 'reset' => 1234)));
+              ->will($this->returnValue(['limit' => 100, 'calls' => 1, 'reset' => 1234]));
         $client->expects($this->atLeastOnce())
               ->method('cas')
               ->with(null, 'foo')
@@ -62,7 +61,7 @@ class MemcacheTest extends TestCase
 
     public function testLimitRateWithKey()
     {
-        $client = @$this->getMock('\\Memcached', array('get','cas','getResultCode'));
+        $client = @$this->getMock('\\Memcached', ['get', 'cas', 'getResultCode']);
         $client->expects($this->any())
                 ->method('getResultCode')
                 ->willReturn(\Memcached::RES_SUCCESS);
@@ -77,7 +76,7 @@ class MemcacheTest extends TestCase
 
     public function testresetRate()
     {
-        $client = @$this->getMock('\\Memcached', array('delete'));
+        $client = @$this->getMock('\\Memcached', ['delete']);
         $client->expects($this->once())
               ->method('delete')
               ->with('foo');
@@ -85,5 +84,4 @@ class MemcacheTest extends TestCase
         $storage = new Memcache($client);
         $this->assertTrue($storage->resetRate('foo'));
     }
-
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Instasent\RateLimitBundle\Util;
 
 use Instasent\RateLimitBundle\Annotation\RateLimit;
@@ -10,7 +9,7 @@ class PathLimitProcessor
 {
     private $pathLimits;
 
-    function __construct(array $pathLimits)
+    public function __construct(array $pathLimits)
     {
         $this->pathLimits = $pathLimits;
 
@@ -21,7 +20,7 @@ class PathLimitProcessor
 
         // Order the configs so that the most specific paths
         // are matched first
-        usort($this->pathLimits, function($a, $b) {
+        usort($this->pathLimits, function ($a, $b) {
             return substr_count($b['path'], '/') - substr_count($a['path'], '/');
         });
     }
@@ -33,15 +32,13 @@ class PathLimitProcessor
 
         foreach ($this->pathLimits as $pathLimit) {
             if ($this->requestMatched($pathLimit, $path, $method)) {
-                return new RateLimit(array(
-                    'limit' => $pathLimit['limit'],
-                    'period' => $pathLimit['period'],
-                    'methods' => $pathLimit['methods']
-                ));
+                return new RateLimit([
+                    'limit'   => $pathLimit['limit'],
+                    'period'  => $pathLimit['period'],
+                    'methods' => $pathLimit['methods'],
+                ]);
             }
         }
-
-        return null;
     }
 
     public function getMatchedPath(Request $request)
@@ -60,7 +57,7 @@ class PathLimitProcessor
 
     private function requestMatched($pathLimit, $path, $method)
     {
-       return $this->methodMatched($pathLimit['methods'], $method)
+        return $this->methodMatched($pathLimit['methods'], $method)
             && $this->pathMatched($pathLimit['path'], $path);
     }
 
@@ -80,7 +77,7 @@ class PathLimitProcessor
         $expectedParts = explode('/', $expectedPath);
         $actualParts = explode('/', $path);
 
-        if (sizeof($actualParts) < sizeof($expectedParts)) {
+        if (count($actualParts) < count($expectedParts)) {
             return false;
         }
 
@@ -92,4 +89,4 @@ class PathLimitProcessor
 
         return true;
     }
-} 
+}

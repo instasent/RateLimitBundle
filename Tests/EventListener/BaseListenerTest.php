@@ -5,7 +5,8 @@ namespace Instasent\RateLimitBundle\Tests\Annotation;
 use Instasent\RateLimitBundle\EventListener\BaseListener;
 use Instasent\RateLimitBundle\Tests\TestCase;
 
-class MockListener extends BaseListener {
+class MockListener extends BaseListener
+{
 }
 
 class BaseListenerTest extends TestCase
