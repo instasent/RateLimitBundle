@@ -14,7 +14,7 @@ class RateLimit extends ConfigurationAnnotation
     /**
      * @var array HTTP Methods protected by this annotation. Defaults to all method
      */
-    protected $methods = array();
+    protected $methods = [];
 
     /**
      * @var int Number of calls per period
@@ -33,13 +33,13 @@ class RateLimit extends ConfigurationAnnotation
      */
     public function getAliasName()
     {
-        return "x-rate-limit";
+        return 'x-rate-limit';
     }
 
     /**
-     * Returns whether multiple annotations of this type are allowed
+     * Returns whether multiple annotations of this type are allowed.
      *
-     * @return Boolean
+     * @return bool
      */
     public function allowArray()
     {

@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RateLimitEvent extends Event
 {
-
     /** @var Request */
     protected $request;
 
@@ -36,5 +35,4 @@ class RateLimitEvent extends Event
     {
         return $this->request;
     }
-
 }

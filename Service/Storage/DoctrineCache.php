@@ -5,15 +5,18 @@ namespace Instasent\RateLimitBundle\Service\Storage;
 use Doctrine\Common\Cache\Cache;
 use Instasent\RateLimitBundle\Service\RateLimitInfo;
 
-class DoctrineCache implements StorageInterface {
+class DoctrineCache implements StorageInterface
+{
     /** @var \Doctrine\Common\Cache\Cache */
     protected $client;
 
-    public function __construct(Cache $client) {
+    public function __construct(Cache $client)
+    {
         $this->client = $client;
     }
 
-    public function getRateInfo($key) {
+    public function getRateInfo($key)
+    {
         $info = $this->client->fetch($key);
 
         $rateLimitInfo = new RateLimitInfo();
@@ -24,7 +27,8 @@ class DoctrineCache implements StorageInterface {
         return $rateLimitInfo;
     }
 
-    public function limitRate($key) {
+    public function limitRate($key)
+    {
         $info = $this->client->fetch($key);
         if ($info === false || !array_key_exists('limit', $info)) {
             return false;
@@ -39,8 +43,9 @@ class DoctrineCache implements StorageInterface {
         return $this->getRateInfo($key);
     }
 
-    public function createRate($key, $limit, $period) {
-        $info          = array();
+    public function createRate($key, $limit, $period)
+    {
+        $info = [];
         $info['limit'] = $limit;
         $info['calls'] = 1;
         $info['reset'] = time() + $period;
@@ -50,8 +55,10 @@ class DoctrineCache implements StorageInterface {
         return $this->getRateInfo($key);
     }
 
-    public function resetRate($key) {
+    public function resetRate($key)
+    {
         $this->client->delete($key);
+
         return true;
     }
 }

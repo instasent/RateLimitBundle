@@ -13,14 +13,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-class MockController {
-    function mockAction() { }
+class MockController
+{
+    public function mockAction()
+    {
+    }
 }
-
 
 class RateLimitAnnotationListenerTest extends TestCase
 {
-
     /**
      * @var MockStorage
      */
@@ -39,7 +40,6 @@ class RateLimitAnnotationListenerTest extends TestCase
         return $this->mockStorage;
     }
 
-
     public function testReturnedWhenNotAMasterRequest()
     {
         $listener = $this->createListener($this->never());
@@ -48,18 +48,17 @@ class RateLimitAnnotationListenerTest extends TestCase
         $listener->onKernelController($event);
     }
 
-
     public function testReturnedWhenNoControllerFound()
     {
         $listener = $this->createListener($this->never());
 
         $kernel = $this->getMock('Symfony\\Component\\HttpKernel\\HttpKernelInterface');
         $request = new Request();
-        $event = new FilterControllerEvent($kernel, function() {}, $request, HttpKernelInterface::MASTER_REQUEST);
+        $event = new FilterControllerEvent($kernel, function () {
+        }, $request, HttpKernelInterface::MASTER_REQUEST);
 
         $listener->onKernelController($event);
     }
-
 
     public function testReturnedWhenNoAnnotationsFound()
     {
@@ -88,9 +87,9 @@ class RateLimitAnnotationListenerTest extends TestCase
         $listener = $this->createListener($this->once());
 
         $event = $this->createEvent();
-        $event->getRequest()->attributes->set('_x-rate-limit', array(
-            new RateLimit(array('limit' => 100, 'period' => 3600)),
-        ));
+        $event->getRequest()->attributes->set('_x-rate-limit', [
+            new RateLimit(['limit' => 100, 'period' => 3600]),
+        ]);
 
         $listener->onKernelController($event);
     }
@@ -101,10 +100,10 @@ class RateLimitAnnotationListenerTest extends TestCase
 
         $listener = $this->createListener($this->once());
 
-        $rateLimit = new RateLimit(array(
-            'limit' => 100,
-            'period' => 200
-        ));
+        $rateLimit = new RateLimit([
+            'limit'  => 100,
+            'period' => 200,
+        ]);
 
         $this->mockPathLimitProcessor->expects($this->any())
                                      ->method('getRateLimit')
@@ -118,10 +117,9 @@ class RateLimitAnnotationListenerTest extends TestCase
         $listener = $this->createListener($this->any());
 
         $event = $this->createEvent();
-        $event->getRequest()->attributes->set('_x-rate-limit', array(
-            new RateLimit(array('limit' => 5, 'period' => 10)),
-        ));
-
+        $event->getRequest()->attributes->set('_x-rate-limit', [
+            new RateLimit(['limit' => 5, 'period' => 10]),
+        ]);
 
         $this->assertNull($event->getRequest()->attributes->get('rate_limit_info'));
 
@@ -139,9 +137,9 @@ class RateLimitAnnotationListenerTest extends TestCase
         $listener = $this->createListener($this->any());
 
         $event = $this->createEvent();
-        $event->getRequest()->attributes->set('_x-rate-limit', array(
-            new RateLimit(array('limit' => 5, 'period' => 5)),
-        ));
+        $event->getRequest()->attributes->set('_x-rate-limit', [
+            new RateLimit(['limit' => 5, 'period' => 5]),
+        ]);
 
         $listener->onKernelController($event);
         $this->assertInternalType('array', $event->getController());
@@ -166,9 +164,9 @@ class RateLimitAnnotationListenerTest extends TestCase
         $listener = $this->createListener($this->any());
 
         $event = $this->createEvent();
-        $event->getRequest()->attributes->set('_x-rate-limit', array(
-                new RateLimit(array('limit' => 5, 'period' => 3)),
-        ));
+        $event->getRequest()->attributes->set('_x-rate-limit', [
+                new RateLimit(['limit' => 5, 'period' => 3]),
+        ]);
 
         // Throttled
         $storage = $this->getMockStorage();
@@ -182,9 +180,9 @@ class RateLimitAnnotationListenerTest extends TestCase
         $listener = $this->createListener($this->any());
 
         $event = $this->createEvent();
-        $event->getRequest()->attributes->set('_x-rate-limit', array(
-            new RateLimit(array('limit' => 5, 'period' => 3)),
-        ));
+        $event->getRequest()->attributes->set('_x-rate-limit', [
+            new RateLimit(['limit' => 5, 'period' => 3]),
+        ]);
 
         // Expired
         $storage = $this->getMockStorage();
@@ -201,11 +199,11 @@ class RateLimitAnnotationListenerTest extends TestCase
 
         $request = new Request();
 
-        $annotations = array(
-            new RateLimit(array('limit' => 100, 'period' => 3600)),
-            new RateLimit(array('methods' => 'GET', 'limit' => 100, 'period' => 3600)),
-            new RateLimit(array('methods' => array('POST', 'PUT'), 'limit' => 100, 'period' => 3600)),
-        );
+        $annotations = [
+            new RateLimit(['limit' => 100, 'period' => 3600]),
+            new RateLimit(['methods' => 'GET', 'limit' => 100, 'period' => 3600]),
+            new RateLimit(['methods' => ['POST', 'PUT'], 'limit' => 100, 'period' => 3600]),
+        ];
 
         // Find the method that matches the string
         $request->setMethod('GET');
@@ -229,7 +227,6 @@ class RateLimitAnnotationListenerTest extends TestCase
         );
     }
 
-
     public function testFindNoAnnotations()
     {
         $listener = $this->createListener($this->any());
@@ -238,7 +235,7 @@ class RateLimitAnnotationListenerTest extends TestCase
 
         $request = new Request();
 
-        $annotations = array();
+        $annotations = [];
 
         $request->setMethod('PUT');
         $this->assertNull($method->invoke($listener, $request, $annotations));
@@ -246,7 +243,6 @@ class RateLimitAnnotationListenerTest extends TestCase
         $request->setMethod('GET');
         $this->assertNull($method->invoke($listener, $request, $annotations));
     }
-
 
     public function testFindBestMethodMatchNotMatchingAnnotations()
     {
@@ -256,9 +252,9 @@ class RateLimitAnnotationListenerTest extends TestCase
 
         $request = new Request();
 
-        $annotations = array(
-            new RateLimit(array('methods' => 'GET', 'limit' => 100, 'period' => 3600)),
-        );
+        $annotations = [
+            new RateLimit(['methods' => 'GET', 'limit' => 100, 'period' => 3600]),
+        ];
 
         $request->setMethod('PUT');
         $this->assertNull($method->invoke($listener, $request, $annotations));
@@ -270,7 +266,6 @@ class RateLimitAnnotationListenerTest extends TestCase
         );
     }
 
-
     public function testFindBestMethodMatchMatchingMultipleAnnotations()
     {
         $listener = $this->createListener($this->any());
@@ -279,10 +274,10 @@ class RateLimitAnnotationListenerTest extends TestCase
 
         $request = new Request();
 
-        $annotations = array(
-            new RateLimit(array('methods' => 'GET', 'limit' => 100, 'period' => 3600)),
-            new RateLimit(array('methods' => array('GET','PUT'), 'limit' => 200, 'period' => 7200)),
-        );
+        $annotations = [
+            new RateLimit(['methods' => 'GET', 'limit' => 100, 'period' => 3600]),
+            new RateLimit(['methods' => ['GET', 'PUT'], 'limit' => 200, 'period' => 7200]),
+        ];
 
         $request->setMethod('PUT');
         $this->assertEquals($annotations[1], $method->invoke($listener, $request, $annotations));
@@ -302,10 +297,10 @@ class RateLimitAnnotationListenerTest extends TestCase
         $action = 'mockAction';
 
         $request = $request === null ? new Request() : $request;
-        $event = new FilterControllerEvent($kernel, array($controller, $action), $request, $type);
+        $event = new FilterControllerEvent($kernel, [$controller, $action], $request, $type);
+
         return $event;
     }
-
 
     protected function createListener($expects)
     {
@@ -328,7 +323,6 @@ class RateLimitAnnotationListenerTest extends TestCase
         );
     }
 
-
     /**
      * @expectedException \BadFunctionCallException
      * @expectedExceptionCode 123
@@ -342,9 +336,9 @@ class RateLimitAnnotationListenerTest extends TestCase
         $listener->setParameter('rate_response_message', 'a message');
 
         $event = $this->createEvent();
-        $event->getRequest()->attributes->set('_x-rate-limit', array(
-                new RateLimit(array('limit' => 5, 'period' => 3)),
-        ));
+        $event->getRequest()->attributes->set('_x-rate-limit', [
+                new RateLimit(['limit' => 5, 'period' => 3]),
+        ]);
 
         // Throttled
         $storage = $this->getMockStorage();
@@ -359,15 +353,15 @@ class RateLimitAnnotationListenerTest extends TestCase
         $listener->setParameter('rate_response_message', 'a message');
 
         $event = $this->createEvent();
-        $event->getRequest()->attributes->set('_x-rate-limit', array(
-                new RateLimit(array('limit' => 5, 'period' => 3)),
-        ));
+        $event->getRequest()->attributes->set('_x-rate-limit', [
+                new RateLimit(['limit' => 5, 'period' => 3]),
+        ]);
 
         // Throttled
         $storage = $this->getMockStorage();
         $storage->createMockRate(':Instasent\RateLimitBundle\EventListener\Tests\MockController:mockAction', 5, 10, 6);
 
-        /** @var Response $response */
+        /* @var Response $response */
         $listener->onKernelController($event);
 
         // Call the controller, it will return a response object
@@ -375,8 +369,6 @@ class RateLimitAnnotationListenerTest extends TestCase
         $response = $a();
 
         $this->assertEquals($response->getStatusCode(), 123);
-        $this->assertEquals($response->getContent(), "a message");
+        $this->assertEquals($response->getContent(), 'a message');
     }
-
-
 }

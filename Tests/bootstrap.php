@@ -17,7 +17,7 @@ if ((!$loader = includeIfExists(__DIR__.'/../vendor/autoload.php')) &&
 }
 
 if (class_exists('Doctrine\Common\Annotations\AnnotationRegistry')) {
-    \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
+    \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader([$loader, 'loadClass']);
 }
 
 // force loading the XRateLimit annotation since the composer target-dir autoloader does not run through $loader::loadClass

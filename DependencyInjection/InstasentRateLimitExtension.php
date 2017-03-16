@@ -2,21 +2,21 @@
 
 namespace Instasent\RateLimitBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
- * This is the class that loads and manages your bundle configuration
+ * This is the class that loads and manages your bundle configuration.
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
  */
 class InstasentRateLimitExtension extends Extension
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -69,19 +69,19 @@ class InstasentRateLimitExtension extends Extension
             case 'memcache':
                 $container->getDefinition('instasent_rate_limit.storage')->replaceArgument(
                     0,
-                    new Reference('memcache.' . $config['memcache_client'])
+                    new Reference('memcache.'.$config['memcache_client'])
                 );
                 break;
             case 'redis':
                 $container->getDefinition('instasent_rate_limit.storage')->replaceArgument(
                     0,
-                    new Reference('snc_redis.' . $config['redis_client'])
+                    new Reference('snc_redis.'.$config['redis_client'])
                 );
                 break;
             case 'doctrine':
                 $container->getDefinition('instasent_rate_limit.storage')->replaceArgument(
                     0,
-                    new Reference('doctrine_cache.providers.' . $config['doctrine_provider'])
+                    new Reference('doctrine_cache.providers.'.$config['doctrine_provider'])
                 );
                 break;
         }

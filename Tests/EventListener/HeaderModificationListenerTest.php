@@ -3,19 +3,14 @@
 namespace Instasent\RateLimitBundle\Tests\Annotation;
 
 use Instasent\RateLimitBundle\EventListener\HeaderModificationListener;
-use Instasent\RateLimitBundle\EventListener\OauthKeyGenerateListener;
-use Instasent\RateLimitBundle\Events\GenerateKeyEvent;
 use Instasent\RateLimitBundle\Service\RateLimitInfo;
 use Instasent\RateLimitBundle\Tests\TestCase;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\HttpKernel;
 
 class HeaderModificationListenerTest extends TestCase
 {
-
     public function testListenerWithoutInfo()
     {
         $event = $this->createEvent();
@@ -31,7 +26,6 @@ class HeaderModificationListenerTest extends TestCase
         $this->assertFalse($event->getResponse()->headers->has('X-RateLimit-Reset'));
         $this->assertFalse($event->getResponse()->headers->has('X-RateLimit-Remaining'));
     }
-
 
     public function testListenerWithInfo()
     {
@@ -145,6 +139,7 @@ class HeaderModificationListenerTest extends TestCase
         $request = new Request();
         $response = new Response();
         $event = new FilterResponseEvent($kernel, $request, '', $response);
+
         return $event;
     }
 }

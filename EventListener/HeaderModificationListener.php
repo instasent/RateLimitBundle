@@ -7,11 +7,10 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 class HeaderModificationListener extends BaseListener
 {
-
     /**
      * @param array $defaultParameters
      */
-    public function __construct($defaultParameters = array())
+    public function __construct($defaultParameters = [])
     {
         $this->parameters = $defaultParameters;
     }
@@ -25,17 +24,16 @@ class HeaderModificationListener extends BaseListener
 
         // Check if we have a rate-limit-info object in our request attributes. If not, we didn't need to limit.
         $rateLimitInfo = $request->attributes->get('rate_limit_info', null);
-        if (! $rateLimitInfo) {
+        if (!$rateLimitInfo) {
             return;
         }
 
         // Check if we need to add our x-rate-limits to the headers
-        if (! $this->getParameter('display_headers')) {
+        if (!$this->getParameter('display_headers')) {
             return;
         }
 
         /** @var RateLimitInfo $rateLimitInfo */
-
         $remaining = $rateLimitInfo->getLimit() - $rateLimitInfo->getCalls();
         if ($remaining < 0) {
             $remaining = 0;

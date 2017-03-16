@@ -2,25 +2,25 @@
 
 namespace Instasent\RateLimitBundle\Tests\Service\Storage;
 
-
 use Instasent\RateLimitBundle\Service\Storage\DoctrineCache;
 use Instasent\RateLimitBundle\Tests\TestCase;
 
 class DoctrineCacheTest extends TestCase
 {
-    function setUp() {
-        if (! class_exists('Doctrine\\Common\\Cache\\ArrayCache')) {
+    public function setUp()
+    {
+        if (!class_exists('Doctrine\\Common\\Cache\\ArrayCache')) {
             $this->markTestSkipped('Doctrine cache not installed');
         }
     }
 
     public function testgetRateInfo()
     {
-        $client = $this->getMock('Doctrine\\Common\\Cache\\ArrayCache', array('fetch'));
+        $client = $this->getMock('Doctrine\\Common\\Cache\\ArrayCache', ['fetch']);
         $client->expects($this->once())
             ->method('fetch')
             ->with('foo')
-            ->will($this->returnValue(array('limit' => 100, 'calls' => 50, 'reset' => 1234)));
+            ->will($this->returnValue(['limit' => 100, 'calls' => 50, 'reset' => 1234]));
 
         $storage = new DoctrineCache($client);
         $rli = $storage->getRateInfo('foo');
@@ -32,7 +32,7 @@ class DoctrineCacheTest extends TestCase
 
     public function testcreateRate()
     {
-        $client = $this->getMock('Doctrine\\Common\\Cache\\ArrayCache', array('save'));
+        $client = $this->getMock('Doctrine\\Common\\Cache\\ArrayCache', ['save']);
         $client->expects($this->once())
             ->method('save');
 
@@ -40,10 +40,9 @@ class DoctrineCacheTest extends TestCase
         $storage->createRate('foo', 100, 123);
     }
 
-
     public function testLimitRateNoKey()
     {
-        $client = $this->getMock('Doctrine\\Common\\Cache\\ArrayCache', array('fetch'));
+        $client = $this->getMock('Doctrine\\Common\\Cache\\ArrayCache', ['fetch']);
         $client->expects($this->once())
             ->method('fetch')
             ->with('foo')
@@ -55,7 +54,7 @@ class DoctrineCacheTest extends TestCase
 
     public function testLimitRateWithKey()
     {
-        $client = $this->getMock('Doctrine\\Common\\Cache\\ArrayCache', array('fetch', 'save'));
+        $client = $this->getMock('Doctrine\\Common\\Cache\\ArrayCache', ['fetch', 'save']);
 
         $info['limit'] = 100;
         $info['calls'] = 50;
@@ -72,11 +71,9 @@ class DoctrineCacheTest extends TestCase
         $storage->limitRate('foo');
     }
 
-
-
     public function testresetRate()
     {
-        $client = $this->getMock('Doctrine\\Common\\Cache\\ArrayCache', array('delete'));
+        $client = $this->getMock('Doctrine\\Common\\Cache\\ArrayCache', ['delete']);
         $client->expects($this->once())
             ->method('delete')
             ->with('foo');
@@ -84,4 +81,4 @@ class DoctrineCacheTest extends TestCase
         $storage = new DoctrineCache($client);
         $this->assertTrue($storage->resetRate('foo'));
     }
-} 
+}

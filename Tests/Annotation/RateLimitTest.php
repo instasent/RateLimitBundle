@@ -2,7 +2,6 @@
 
 namespace Instasent\RateLimitBundle\Tests\Annotation;
 
-use Instasent\RateLimitBundle\Annotation;
 use Instasent\RateLimitBundle\Annotation\RateLimit;
 use Instasent\RateLimitBundle\Tests\TestCase;
 
@@ -10,7 +9,7 @@ class RateLimitTest extends TestCase
 {
     public function testConstruction()
     {
-        $annot = new RateLimit(array());
+        $annot = new RateLimit([]);
 
         $this->assertEquals('x-rate-limit', $annot->getAliasName());
         $this->assertTrue($annot->allowArray());
@@ -22,12 +21,11 @@ class RateLimitTest extends TestCase
 
     public function testConstructionWithValues()
     {
-        $annot = new RateLimit(array('limit' => 1234, 'period' => 1000));
+        $annot = new RateLimit(['limit' => 1234, 'period' => 1000]);
         $this->assertEquals(1234, $annot->getLimit());
         $this->assertEquals(1000, $annot->getPeriod());
 
-
-        $annot = new RateLimit(array('methods' => 'POST', 'limit' => 1234, 'period' => 1000));
+        $annot = new RateLimit(['methods' => 'POST', 'limit' => 1234, 'period' => 1000]);
         $this->assertEquals(1234, $annot->getLimit());
         $this->assertEquals(1000, $annot->getPeriod());
         $this->assertEquals('POST', $annot->getMethods());
@@ -35,10 +33,10 @@ class RateLimitTest extends TestCase
 
     public function testConstructionWithMethods()
     {
-        $annot = new RateLimit(array('limit' => 1234, 'period' => 1000, 'methods' => array('POST', 'GET')));
+        $annot = new RateLimit(['limit' => 1234, 'period' => 1000, 'methods' => ['POST', 'GET']]);
         $this->assertCount(2, $annot->getMethods());
 
-        $annot->setMethods(array());
+        $annot->setMethods([]);
         $this->assertCount(0, $annot->getMethods());
     }
 }

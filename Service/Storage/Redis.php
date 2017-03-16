@@ -30,7 +30,7 @@ class Redis implements StorageInterface
 
     public function limitRate($key)
     {
-        if (! $this->client->hexists($key, 'limit')) {
+        if (!$this->client->hexists($key, 'limit')) {
             return false;
         }
 
@@ -52,6 +52,7 @@ class Redis implements StorageInterface
     public function resetRate($key)
     {
         $this->client->hdel($key);
+
         return true;
     }
 }
